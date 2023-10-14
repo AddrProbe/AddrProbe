@@ -66,14 +66,20 @@ pip3 install setuptools
 ```
 cd AddrProbe/code
 python3 main_train.py
+cp -r ../result/result_template ../result/result
 python3 main_test_seeded_prefix.py
+mv ../result/result ../result/result_seeded_prefix
+cp -r ../result/result_template ../result/result
 python3 main_test_unseeded_prefix.py
+python3 sat_aliased_prefix.py
 ```
 
-If you want to change the default configuration, you can edit `DefaultConfig` in `AddrProbe/code/config.py`
+If you want to change the default configuration, you can edit `DefaultConfig` in `AddrProbe/code/config.py`. Note that the first thing you need to do is to set the Zmap parameters in it, including the source IPv6 address and so on.
 
 
 ## Result
 After running the programmings, you can get the output in the file directory that you set in the `AddrProbe/code/config.py`. For each prefix, you can get the newly probed active address.
-* Probing results for seeded prefixes are in `{config.seeded_active_address_bank_path}`
-* Probing results for unseeded prefixes are in `{config.unseeded_active_address_bank_path}`
+* Probing results for seeded prefixes are in `AddrProbe/result/result_seeded_prefix/active_address_bank`
+* Probing results for unseeded prefixes are in `AddrProbe/result/result_unseeded_prefix/active_address_bank`
+* Probing aliased prefix for seeded prefixes are in `AddrProbe/result/result_seeded_prefix/zmap_result/aliased_prefix.txt`
+* Probing aliased prefix for unseeded prefixes are in `AddrProbe/result/result_seeded_prefix/zmap_result/aliased_prefix.txt`

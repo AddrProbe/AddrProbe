@@ -21,7 +21,7 @@ class DefaultConfig(object):
     model_prefix_attr_path = os.path.join(current_path, '../data/result_info/seeded_prefix_as_attr.txt')
 
     # train / test
-    model_path = os.path.join(current_path, '../model/')
+    model_path = os.path.join(current_path, '../model/model/')
     init_cluster_info_path = os.path.join(current_path, '../model/init_cluster_info.txt')
 
     # test
@@ -29,34 +29,28 @@ class DefaultConfig(object):
     init_prob_budget = prefix_budget * 0.05 # init prob budget
     growth_factor = 10
     fine_lower_limit = 128
-    iter_model_path = os.path.join(current_path, '../model/model/iter_model/')
+    iter_model_path = os.path.join(current_path, '../model/iter_model/')
     is_model_prefix = True   # True (seeded prefix) or False (unseeded prefixs)
     # seeded prefix
-    test_prefix_and_attr_path = os.path.join(current_path, '../data/result_info/seeded_prefix_as_attr.txt') 
+    test_seeded_prefix_and_attr_path = os.path.join(current_path, '../data/result_info/seeded_prefix_as_attr.txt') 
+
     # unseeded prefixs
-    # test_prefix_and_attr_path = os.path.join(current_path, '../data/result_info/unseeded_prefix_as_attr.txt') 
+    test_unseeded_prefix_and_attr_path = os.path.join(current_path, '../data/result_info/unseeded_prefix_as_attr.txt') 
 
     # fre prefix 
-    get_fre_pattern_path = os.path.join(current_path, '../result/probing_result_seeded_prefix/seeded_zmap_result_path/')
+    get_fre_pattern_path = os.path.join(current_path, '../result/result_seeded_prefix/zmap_result/')
 
-    # seeded prefix result path
-    seeded_generated_address_path = os.path.join(current_path, '../probing_result_seeded_prefix/generated_address/')
-    seeded_new_address_path = os.path.join(current_path, '../probing_result_seeded_prefix/new_address/')
-    seeded_address_bank_path = os.path.join(current_path, '../probing_result_seeded_prefix/address_bank/')
-    seeded_active_address_bank_path = os.path.join(current_path, '../probing_result_seeded_prefix/active_address_bank/')
-    seeded_zmap_result_path = os.path.join(current_path, '../probing_result_seeded_prefix/zmap_result/')
+    # seeded/unseeded prefix result path
+    generated_address_path = os.path.join(current_path, '../result/result/generated_address/')
+    new_address_path = os.path.join(current_path, '../result/result/new_address/')
+    address_bank_path = os.path.join(current_path, '../result/result/address_bank/')
+    active_address_bank_path = os.path.join(current_path, '../result/result/active_address_bank/')
+    zmap_result_path = os.path.join(current_path, '../result/result/zmap_result/')
 
 
-    # unseeded prefix result path
-    unseeded_generated_address_path = os.path.join(current_path, '../probing_result_unseeded_prefix/generated_address/')
-    unseeded_new_address_path = os.path.join(current_path, '../probing_result_unseeded_prefix/new_address/')
-    unseeded_address_bank_path = os.path.join(current_path, '../probing_result_unseeded_prefix/address_bank/')
-    unseeded_active_address_bank_path = os.path.join(current_path, '../probing_result_unseeded_prefix/active_address_bank/')
-    unseeded_zmap_result_path = os.path.join(current_path, '../probing_result_unseeded_prefix/zmap_result/')
-
-    #zmap input
-    local_ipv6 = "2402:f000:6:1e00::229"
-    password = "!@#1270719077qwe"
+    # zmap
+    local_ipv6 = "********"
+    password = "*******"
 
     input_size = 32
     latent_size = 8     
@@ -73,7 +67,7 @@ class DefaultConfig(object):
     feature_num = 128
     intermediate_size = 128
 
-    epoch_num = 1
+    epoch_num = 20
     lr = 1e-3
 
     warmup_epoch_num = 3

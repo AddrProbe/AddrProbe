@@ -1,4 +1,3 @@
-#no seeds
 import os
 import re, math, ast, copy
 import subprocess
@@ -85,21 +84,21 @@ def init_probe_specific_prefix(prefix, test_prefix, all_cluster_distribution, mo
     print('remove duplicate generated_address_num',generated_address_num)
 
     if generated_address_num > 0:
-        # create config.seeded_active_address_bank_path/prefix.txt and write into it
-        with open(config.seeded_active_address_bank_path + f"{prefix}.txt", 'a') as f:
+        # create config.address_bank_path/prefix.txt and write into it
+        with open(config.address_bank_path + f"{prefix}.txt", 'a') as f:
             for address in generated_address_with_label.keys():
                 f.write(address + "\n")
-        # create config.seeded_generated_address_path/prefix.txt and write into it
-        with open(config.seeded_generated_address_path + f"{prefix}.txt", 'w') as f:
+        # create config.generated_address_path/prefix.txt and write into it
+        with open(config.generated_address_path + f"{prefix}.txt", 'w') as f:
             for address in generated_address_with_label.keys():
                 f.write(address + "\n")
 
-        seeded_generated_address_path = config.seeded_generated_address_path + '{prefix}'.format(prefix=prefix) + ".txt"
-        seeded_zmap_result_path = config.seeded_zmap_result_path + '{prefix}'.format(prefix=prefix) + ".txt"
+        generated_address_path = config.generated_address_path + '{prefix}'.format(prefix=prefix) + ".txt"
+        zmap_result_path = config.zmap_result_path + '{prefix}'.format(prefix=prefix) + ".txt"
         print(f"Running zmap for prefix {prefix}...")
         cmd = (f"sudo -S zmap --ipv6-source-ip={config.local_ipv6} "
-                f"--ipv6-target-file={seeded_generated_address_path} "
-                f"-o {seeded_zmap_result_path} -M icmp6_echoscan -B 10M --verbosity=0")
+                f"--ipv6-target-file={generated_address_path} "
+                f"-o {zmap_result_path} -M icmp6_echoscan -B 10M --verbosity=0")
         echo = subprocess.Popen(['echo',config.password], stdout=subprocess.PIPE,)
         p = subprocess.Popen(cmd, shell=True, stdin=echo.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         hit_rate = re.findall(r"\d+\.?\d*", p.communicate()[1][-10:].decode('utf-8'))[0]
@@ -107,7 +106,7 @@ def init_probe_specific_prefix(prefix, test_prefix, all_cluster_distribution, mo
 
         # read zmap result and format from string to standard address
         zmap_active_address = []
-        with open(seeded_zmap_result_path, 'r') as f:
+        with open(zmap_result_path, 'r') as f:
             for line in f:
                 zmap_active_address.append(format_str_to_standard(line.strip()))
         # merge zmap_active_address and generated_address_with_label
@@ -134,7 +133,7 @@ def init_probe_specific_prefix(prefix, test_prefix, all_cluster_distribution, mo
         list_alias_prefix = []
         if df_active_address_label.shape[0] > 1:
             list_alias_prefix = alias_detection(df_active_address_label, prefix, test_prefix)
-            print('alias prefix :', list_alias_prefix)
+            # print('alias prefix :', list_alias_prefix)
             sum_alias_prefix = list(set(list_alias_prefix + sum_alias_prefix))
         
         if sum_alias_prefix and df_active_address_label.shape[0] != 0:
@@ -155,11 +154,11 @@ def init_probe_specific_prefix(prefix, test_prefix, all_cluster_distribution, mo
             hit_rate_no_alias = round(no_alias_active_address_num/generated_address_num_after_del_alias * 100, 2)
             print('hit_rate_no_alias: ', hit_rate_no_alias)
 
-            # save the active address with label into config.unseeded_new_address_path/prefix.txt
-            df_active_address_label.to_csv(config.unseeded_new_address_path + f"{prefix}.txt",
+            # save the active address with label into config.new_address_path/prefix.txt
+            df_active_address_label.to_csv(config.new_address_path + f"{prefix}.txt",
                                             sep=',', header=False, index=False)
-            # add the active address with label into config.unseeded_new_address_path/all_prefix.txt
-            with open(config.active_seeded_active_address_bank_path + f"all_{prefix}.txt", 'a') as f:
+            # add the active address with label into config.new_address_path/all_prefix.txt
+            with open(config.active_address_bank_path + f"all_{prefix}.txt", 'a') as f:
                 for i in range(df_active_address_label.shape[0]):
                     f.write(df_active_address_label.iloc[i, 0] + "," + str(df_active_address_label.iloc[i, 1]) + "," + str(df_active_address_label.iloc[i, 2]) + "\n")
 
@@ -185,16 +184,16 @@ def init_probe_specific_prefix(prefix, test_prefix, all_cluster_distribution, mo
 
             # new_cluster_distribution = ','.join(str(i) for i in new_cluster_distribution)
             # list_alias_prefix = ','.join(str(i) for i in list_alias_prefix)
-            # os.remove(config.seeded_active_address_bank_path + f"{prefix}.txt")
-            # os.remove(config.active_seeded_active_address_bank_path + f"all_{prefix}.txt")
+            # os.remove(config.address_bank_path + f"{prefix}.txt")
+            # os.remove(config.active_address_bank_path + f"all_{prefix}.txt")
 
 
-            os.remove(seeded_zmap_result_path)
-            os.remove(seeded_generated_address_path)
+            os.remove(zmap_result_path)
+            os.remove(generated_address_path)
             return hit_rate, hit_rate_no_alias, list_alias_prefix, generated_address_num, generated_address_num_after_del_alias, new_cluster_distribution
         else:
-            os.remove(seeded_zmap_result_path)
-            os.remove(seeded_generated_address_path)
+            os.remove(zmap_result_path)
+            os.remove(generated_address_path)
             hit_rate_no_alias = 0
             new_cluster_distribution = [[0]]
             return hit_rate, hit_rate_no_alias, list_alias_prefix, generated_address_num, generated_address_num_after_del_alias, new_cluster_distribution
@@ -210,24 +209,22 @@ def init_probe_specific_prefix(prefix, test_prefix, all_cluster_distribution, mo
 def init_probe_all_model():
     prefix_cluster_distribution_dict = get_model_cluster_distribution()
     prefix_hit_alias_list = []
-    df_all_test_prefix = pd.read_csv(config.test_prefix_and_attr_path, sep = ',')
+    df_all_test_prefix = pd.read_csv(config.test_seeded_prefix_and_attr_path, sep = ',')
     df_id_prefix_as_attr = pd.read_csv(config.model_prefix_attr_path, sep = ',')
     model_path = config.model_path
     no_match = 0 
 
-    path = config.seeded_zmap_result_path + 'prefix_hit_alias_info.txt'
+    path = config.zmap_result_path + 'prefix_hit_alias_info.txt'
     lines = ['prefix', 'test_prefix', 'hit_rate', 'hit_rate_no_alias', 'alias_prefix', 'num_init_probe_address', 'num_init_probe_address_after_del_alias', 'cluster_distribution']
     lines = ';'.join([str(i) for i in lines]) + '\n'
     with open(path, 'a') as f:
         f.write(lines)
 
-    sam_file = open(config.sam_test_path, 'r')
-    prefix_list = eval(sam_file.read())
-    for prefix in prefix_list:
+    for prefix in range(df_all_test_prefix.shape[0]):
         print(f"---------start---------- init prob prefix for {prefix} ...")
         test_prefix, all_cluster_distribution  = get_match_model_cluster_distribution(prefix, \
                                 df_all_test_prefix, df_id_prefix_as_attr, prefix_cluster_distribution_dict, config.init_prob_budget)
-        print(all_cluster_distribution)
+        # print(all_cluster_distribution)
         if all_cluster_distribution == []:
             no_match = no_match + 1
             continue
@@ -238,22 +235,21 @@ def init_probe_all_model():
 
         list_alias_prefix = ','.join(str(i) for i in list_alias_prefix)
         
-        path = config.seeded_zmap_result_path + 'prefix_hit_alias_info.txt'
+        path = config.zmap_result_path + 'prefix_hit_alias_info.txt'
         lines = [prefix, test_prefix, hit_rate, hit_rate_no_alias, list_alias_prefix,generated_address_num, generated_address_num_after_del_alias, new_cluster_distribution]
         lines = ';'.join([str(i) for i in lines]) + '\n'
         with open(path, 'a') as f:
             f.write(lines)
-    path = config.seeded_zmap_result_path + 'prefix_hit_alias_info.txt'
+    path = config.zmap_result_path + 'prefix_hit_alias_info.txt'
     df_prefix_hit_alias = pd.read_csv(path, delimiter=';')
     df_prefix_hit_alias = df_prefix_hit_alias.sort_values(by=['hit_rate_no_alias']).reset_index(drop=True)
-    # print(df_prefix_hit_alias)
     df_prefix_hit_alias.to_csv(path, index=False)
 
 
 # iter prob
 
 def get_init_prob_cluster_distribution():
-    path = config.seeded_zmap_result_path + 'prefix_hit_alias_info.txt'
+    path = config.zmap_result_path + 'prefix_hit_alias_info.txt'
     df_prefix_hit_alias = pd.read_csv(path)
     # print(df_prefix_hit_alias)
     sum_hit_rate_no_alias = df_prefix_hit_alias['hit_rate_no_alias'].sum()
@@ -267,12 +263,12 @@ def get_init_prob_cluster_distribution():
                         df_prefix_hit_alias['num_init_probe_address_after_del_alias']/config.init_prob_budget/sum_gen_rate)/sum_hit_gen_rate * sum_iter_budget
     df_prefix_hit_alias['iter_budget'] = df_prefix_hit_alias['iter_budget'].astype(int)
     df_prefix_hit_alias = df_prefix_hit_alias.sort_values(by=['iter_budget']).reset_index(drop=True)
-    path = config.seeded_zmap_result_path + 'test_prefix_hit_alias_budget_info.txt'
+    path = config.zmap_result_path + 'test_prefix_hit_alias_budget_info.txt'
     df_prefix_hit_alias.to_csv(path, index=False)
     return df_prefix_hit_alias
 
 def get_iter_train_data(prefix):
-    df_data = pd.read_csv(config.unseeded_new_address_path + f"{prefix}.txt", sep=',', header=None)
+    df_data = pd.read_csv(config.new_address_path + f"{prefix}.txt", sep=',', header=None)
     df_data.columns=['address', 'model', 'label']
     df_data.drop_duplicates(subset = df_data.columns,keep='last',inplace=True)
     df_group_train_data = df_data.groupby('model')
@@ -281,9 +277,9 @@ def get_iter_train_data(prefix):
 
 def iter_probe_specific_prefix(prefix, test_prefix, budget, iter_info_record):
     print(f"---------start---------- iter prob prefix for {prefix} ...")
-    print(f"budget: {budget}")
+    # print(f"budget: {budget}")
     init_prob_record = iter_info_record[0]
-    print('init_prob_record: ', init_prob_record)
+    # print('init_prob_record: ', init_prob_record)
     hit_rate_no_alias = init_prob_record[3]
     if str(init_prob_record[4]) == "nan":
         init_prob_alias_prefix = []
@@ -335,10 +331,10 @@ def iter_probe_specific_prefix(prefix, test_prefix, budget, iter_info_record):
         
         print('After each model is assigned a budget: ', new_cluster_distribution)
         model_path = config.iter_model_path
-        print("intput: ", new_cluster_distribution)
+        # print("intput: ", new_cluster_distribution)
         hit_rate, hit_rate_no_alias, list_alias_prefix, generated_address_num, generated_address_num_after_del_alias, new_cluster_distribution = \
                         init_probe_specific_prefix(prefix, test_prefix, new_cluster_distribution, model_path, sum_alias_prefix)
-        print("output: ", new_cluster_distribution)
+        # print("output: ", new_cluster_distribution)
         record_new_cluster_distribution = copy.deepcopy(new_cluster_distribution)
         iter_info_record.append([prefix, test_prefix, hit_rate, hit_rate_no_alias, list_alias_prefix,generated_address_num,  \
                         generated_address_num_after_del_alias, record_new_cluster_distribution, realtime_budget])
@@ -349,14 +345,14 @@ def iter_probe_specific_prefix(prefix, test_prefix, budget, iter_info_record):
         sum_generated_address_num = sum_generated_address_num + generated_address_num
         sum_alias_prefix = list(set(sum_alias_prefix + list_alias_prefix))
         realtime_budget = realtime_budget - generated_address_num
-    print("remaining budget:", realtime_budget)
+    # print("remaining budget:", realtime_budget)
     if sum_generated_address_num != 0:
         iter_info_record.append(['all:', sum_num_active, sum_generated_address_num, round(100*sum_num_active/sum_generated_address_num, 2), realtime_budget])
     else:
         iter_info_record.append(['all:', sum_num_active, sum_generated_address_num, 0, realtime_budget])
     df_prefix_hit_alias = pd.DataFrame(data=iter_info_record,
                                     columns=['prefix', 'test_prefix', 'hit_rate', 'hit_rate_no_alias', 'alias_prefix', 'num_init_probe_address','generated_address_num_after_del_alias','cluster_distribution', 'realtime_budget'])
-    path = config.seeded_zmap_result_path + '{prefix}_iter_prob_info.txt'.format(prefix=prefix)
+    path = config.zmap_result_path + '{prefix}_iter_prob_info.txt'.format(prefix=prefix)
     df_prefix_hit_alias.to_csv(path, index=False)   
     print(f"---------end---------- iter prob prefix for {prefix} ...")   
     return realtime_budget

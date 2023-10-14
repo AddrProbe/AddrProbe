@@ -22,7 +22,7 @@ class InitAddressDataset(Dataset):
         if self.data.shape[0] > 100000:
             self.data = self.data[np.random.randint(self.data.shape[0], size=100000), :]
         self.sample_num = self.data.shape[0]
-        print(self.data.shape)
+        # print(self.data.shape)
         self.labels, self.cluster_num = self.clustering()
 
     def clustering(self):
@@ -38,8 +38,8 @@ class InitAddressDataset(Dataset):
             cluster_result = cluster_result + 1
         cluster_num = np.unique(cluster_result).shape[0]
         cluster_info = np.bincount(cluster_result)
-        print(f"cluster_num: {cluster_num}")
-        print(f"distribution: {cluster_info}")
+        # print(f"cluster_num: {cluster_num}")
+        # print(f"distribution: {cluster_info}")
         # update_init_cluster_info(self.prefix_index, cluster_info)
         with open(config.init_cluster_info_path, 'r') as f:
             lines = f.readlines()
@@ -103,7 +103,7 @@ class InitGenerateDataset(Dataset):
         # budget according to the distribution of cluster labels
         self.budget_per_cluster = np.array(self.cluster_distribution / temp_sum_cluster_labels)
         self.budget_per_cluster = np.round(self.budget_per_cluster * self.budget).astype(int)
-        print(self.budget_per_cluster)
+        # print(self.budget_per_cluster)
         # update the number of samples
         self.budget = np.sum(self.budget_per_cluster)
         # generate cluster labels
@@ -115,7 +115,7 @@ class InitGenerateDataset(Dataset):
             start_index = end_index
 
         self.cluster_labels_one_hot = np.eye(self.cluster_num)[self.cluster_labels].astype(int)
-        print(self.cluster_labels_one_hot.shape)
+        # print(self.cluster_labels_one_hot.shape)
 
     def get_cluster_num(self):
         return self.cluster_num
@@ -138,7 +138,7 @@ class IterGenerateDataset(Dataset):
         # sample according to the distribution of cluster labels
         self.sample_per_cluster = np.array(self.cluster_distribution / temp_sum_cluster_labels)
         self.sample_per_cluster = np.round(self.sample_per_cluster * self.budget).astype(int)
-        print(self.sample_per_cluster)
+        # print(self.sample_per_cluster)
         # update the number of samples
         self.sample_num = np.sum(self.sample_per_cluster)
         # generate cluster labels
@@ -150,7 +150,7 @@ class IterGenerateDataset(Dataset):
             start_index = end_index
 
         self.cluster_labels_one_hot = np.eye(self.cluster_num)[self.cluster_labels].astype(int)
-        print(self.cluster_labels_one_hot.shape)
+        # print(self.cluster_labels_one_hot.shape)
 
     def get_cluster_num(self):
         return self.cluster_num
@@ -346,7 +346,7 @@ def alias_detection(df_active_address_label, prefix_index, prefix):
             entro_diff_max = temp_diff_max
             break
 
-    print('entro_diff_max', entro_diff_max)
+    # print('entro_diff_max', entro_diff_max)
     if entro_diff_max >= 32:
         entro_diff_max = 29
     count_max = df_active_address_label.iloc[:, entro_diff_max].value_counts()
@@ -445,14 +445,14 @@ def alias_detection(df_active_address_label, prefix_index, prefix):
                 alias_prefix_str = ''.join(alias_prefix_list)
                 all_alias_prefix.append(alias_prefix_str)
 
-        print(alias_prefix_str_1)
+        # print(alias_prefix_str_1)
         if alias_prefix_str_1:
             all_alias_prefix.append(alias_prefix_str_1)
 
 
         os.remove(config.zmap_result_path + 'alias_det_{prefix_index}.txt'.format(prefix_index=prefix_index))
         os.remove(config.zmap_result_path + 'scan_alias_det_{prefix_index}.txt'.format(prefix_index=prefix_index))
-        print(all_alias_prefix)
+        # print(all_alias_prefix)
         return list(set(all_alias_prefix))
     else:
 
