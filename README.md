@@ -97,6 +97,7 @@ This data is only allowed to be used for academic research. Any form of commerci
 If you need to obtain the data, please send an email to [cdg22@mails.tsinghua.edu.cn] using your academic institution email. The email subject should indicate: [Data Name] (Active Addresses or Aliased Prefixes) Application for Academic Use - [Applicant's Name] - [Affiliated Institution]. The content of the email should include the following information:
 * Applicant's name, affiliated academic institution, and title/identity (such as graduate student, researcher, etc.).
 * Specific research project name, research purpose, and brief content for which the data is planned to be used.
+* The required data scale, including the quantity, scope and specific types of data needed.
 * A commitment to using the data solely for academic research and not for commercial use or illegal dissemination.
   
 ### Review Process
