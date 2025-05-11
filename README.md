@@ -83,3 +83,27 @@ After running the programmings, you can get the output in the file directory tha
 * Probing results for unseeded prefixes are in `AddrProbe/result/result_unseeded_prefix/active_address_bank`
 * Probing aliased prefix for seeded prefixes are in `AddrProbe/result/result_seeded_prefix/zmap_result/aliased_prefix.txt`
 * Probing aliased prefix for unseeded prefixes are in `AddrProbe/result/result_seeded_prefix/zmap_result/aliased_prefix.txt`
+
+
+# Probing Results of AddrProbe 
+We deployed AddrProbe on the Internet and conducted continuous iterative probes. Up to now, we have accumulated 562 million active addresses, which covers 189,738 routing prefixes and 29,066 ASes, accounting for 90% and 89% of the routing prefixes announced by the BGP system and ASes, respectively. In addition, we have detected 23,196 aliased prefixes, covering about $\text{1.2}\times\text{10}^{\text{33}}$ aliased addresses. The above data can be obtained and used solely for academic research.
+
+## Data Open Source Notice
+
+### Usage Restrictions
+This data is only allowed to be used for academic research. Any form of commercial use, data resale, or other non-academic use is strictly prohibited. Without permission, the data shall not be used to develop commercial products, conduct profit-making analysis, or disseminate it to commercial institutions.
+
+### Acquisition Method
+If you need to obtain the data, please send an email to [cdg22@mails.tsinghua.edu.cn] using your academic institution email. The email subject should indicate: [Data Name] (Active Addresses or Aliased Prefixes) Application for Academic Use - [Applicant's Name] - [Affiliated Institution]. The content of the email should include the following information:
+* Applicant's name, affiliated academic institution, and title/identity (such as graduate student, researcher, etc.).
+* Specific research project name, research purpose, and brief content for which the data is planned to be used.
+* A commitment to using the data solely for academic research and not for commercial use or illegal dissemination.
+  
+### Review Process
+We will review the email within 7 working days after receiving it. After the review is passed, we will send you the data acquisition link and usage authorization instructions via email. If the application is not approved, the specific reason will also be informed.
+
+### Liability Statement
+Since these data are sensitive to some of the probed networks, if it is found that the data user violates the agreement of academic use, we have the right to terminate the data usage authorization immediately and reserve the right to pursue legal liability. The data user shall bear all relevant responsibilities arising from the use of the data, and our side shall not be responsible for any problems that may occur during the data usage process.
+
+
+We are committed to promoting academic cooperation and knowledge progress. Thank you for your understanding and cooperation! If you have any questions, please feel free to contact us at [cdg22@mails.tsinghua.edu.cn].
