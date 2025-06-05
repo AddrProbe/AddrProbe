@@ -1,7 +1,6 @@
 # AddrProbe
-## A Transfer Learning-based Framework for Internet-wide IPv6 Active Address Probing
-AddrProbe is an Internet-wide IPv6 active address probing system, which realizes effective active address probing by transferring the accurately portrayed seed address patterns to the target prefix based on transfer learning. 
-In addition, a lightweight aliased prefix detection algorithm is proposed for the entire probing process. 
+## An Internet-wide Active IPv6 Address Probing System with Limited Seeds
+For a target prefix, \method initiates probing using address patterns derived from \seedp prefixes with similar routing attributes. During probing, \method dynamically optimizes these patterns to approximate the true distribution of the target prefix, achieving high probing accuracy while supporting efficient probing of all Internet-wide routing prefixes with a small number of seeds.
 
 ## Getting Started
 
